@@ -332,14 +332,11 @@ body {
   cursor: pointer;
 }
 .product-emoji { font-size: 42px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.15)); }
-
-/* ⚡ Фикс "полосок" под фото */
 .product-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;               /* убирает baseline gap под inline-img */
-  background: var(--photo-bg);  /* страховка на время загрузки и по краям */
+  background: var(--photo-bg);   /* страховка от sub-pixel зазоров */
 }
 
 /* gradients */
@@ -446,6 +443,7 @@ body {
 }
 .products-list.grid .product-img {
   width: 100%;
+  height: auto;               /* ← вернули, как было */
   aspect-ratio: 1 / 1;
   border-radius: 12px;
 }
@@ -1214,16 +1212,12 @@ body {
   filter: drop-shadow(0 8px 24px rgba(0,0,0,.3));
   animation: popIn .5s cubic-bezier(.34,1.56,.64,1);
 }
-
-/* ⚡ Фикс "полосок" под фото в hero */
 .detail-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
   background: var(--photo-bg);
 }
-
 @keyframes popIn {
   0% { transform: scale(0); opacity: 0; }
   70% { transform: scale(1.15); }
