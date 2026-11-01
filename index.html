@@ -17,9 +17,9 @@
   <script>
     (function() {
       try {
-        var t = localStorage.getItem('theme') || 'system';
-        var dark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        var t = localStorage.getItem('theme');
+        if (t !== 'light' && t !== 'dark') t = 'dark';
+        document.documentElement.setAttribute('data-theme', t);
       } catch(e) { document.documentElement.setAttribute('data-theme', 'dark'); }
     })();
   </script>
@@ -149,9 +149,21 @@
 
         <template v-else>
           <transition-group name="product-list" tag="div" class="products-list" :class="{ grid: viewMode === 'grid' }">
-            <article v-for="p in filteredProducts" :key="p.id" class="product">
-              <div class="product-img" :class="'grad-'+p.grad" @click="openProductDetail(p.id)">
-                <img v-if="p.image" :src="p.image" :alt="p.name" class="product-photo">
+            <article v-for="(p, index) in filteredProducts" :key="p.id" class="product">
+              <div
+                class="product-img"
+                :class="['grad-'+p.grad, { 'has-photo': p.image }]"
+                @click="openProductDetail(p.id)"
+              >
+                <img
+                  v-if="p.image"
+                  :src="p.image"
+                  :alt="p.name"
+                  class="product-photo"
+                  loading="lazy"
+                  decoding="async"
+                  :fetchpriority="index < 3 ? 'high' : 'auto'"
+                >
                 <span v-else class="product-emoji">{{ p.emoji }}</span>
                 <button 
                   class="fav-btn" 
@@ -220,8 +232,15 @@
         <div class="cart-list">
           <transition-group name="cart-item-list">
             <div v-for="item in cart" :key="item.cartId" class="cart-item">
-              <div class="cart-item-img" :class="'grad-'+item.grad">
-                <img v-if="item.image" :src="item.image" :alt="item.name" class="product-photo">
+              <div class="cart-item-img" :class="['grad-'+item.grad, { 'has-photo': item.image }]">
+                <img
+                  v-if="item.image"
+                  :src="item.image"
+                  :alt="item.name"
+                  class="product-photo"
+                  loading="lazy"
+                  decoding="async"
+                >
                 <span v-else>{{ item.emoji }}</span>
               </div>
               <div class="cart-item-info">
@@ -487,8 +506,15 @@
           </div>
           <div v-else class="fav-list">
             <div v-for="p in favoriteProducts" :key="p.id" class="cart-item" @click="showFavorites = false; openProductDetail(p.id)">
-              <div class="cart-item-img" :class="'grad-'+p.grad">
-                <img v-if="p.image" :src="p.image" :alt="p.name" class="product-photo">
+              <div class="cart-item-img" :class="['grad-'+p.grad, { 'has-photo': p.image }]">
+                <img
+                  v-if="p.image"
+                  :src="p.image"
+                  :alt="p.name"
+                  class="product-photo"
+                  loading="lazy"
+                  decoding="async"
+                >
                 <span v-else>{{ p.emoji }}</span>
               </div>
               <div class="cart-item-info">
@@ -660,8 +686,15 @@
             </button>
           </div>
 
-          <div class="detail-hero" :class="'grad-'+detailProduct.grad">
-            <img v-if="detailProduct.image" :src="detailProduct.image" :alt="detailProduct.name" class="detail-photo">
+          <div class="detail-hero" :class="['grad-'+detailProduct.grad, { 'has-photo': detailProduct.image }]">
+            <img
+              v-if="detailProduct.image"
+              :src="detailProduct.image"
+              :alt="detailProduct.name"
+              class="detail-photo"
+              fetchpriority="high"
+              decoding="async"
+            >
             <span v-else class="detail-emoji">{{ detailProduct.emoji }}</span>
           </div>
 
@@ -713,8 +746,15 @@
                   class="similar-card"
                   @click="openProductDetail(s.id)"
                 >
-                  <div class="similar-img" :class="'grad-'+s.grad">
-                    <img v-if="s.image" :src="s.image" :alt="s.name" class="product-photo">
+                  <div class="similar-img" :class="['grad-'+s.grad, { 'has-photo': s.image }]">
+                    <img
+                      v-if="s.image"
+                      :src="s.image"
+                      :alt="s.name"
+                      class="product-photo"
+                      loading="lazy"
+                      decoding="async"
+                    >
                     <span v-else>{{ s.emoji }}</span>
                   </div>
                   <div class="similar-name">{{ s.name }}</div>
