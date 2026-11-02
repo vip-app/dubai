@@ -1,11 +1,13 @@
 /* =====================================================
-   DUBAI DELIVERY — SERVICE WORKER
-   v2: cache-first для картинок + долгоживущий кэш изображений
+   DUBAI DELIVERY — SERVICE WORKER v3
+   - precache критичных картинок (первые 12 блюд)
+   - cache-first для изображений
+   - FIFO-чистка image-кэша
    ===================================================== */
 
-const CACHE_NAME   = 'dubai-delivery-v2';   // app-shell, версия = сброс при обновлении
-const IMAGE_CACHE  = 'dubai-images-v1';     // отдельный долгоживущий кэш картинок
-const IMAGE_LIMIT  = 250;                   // максимум картинок в кэше (FIFO)
+const CACHE_NAME   = 'dubai-delivery-v3';
+const IMAGE_CACHE  = 'dubai-images-v2';
+const IMAGE_LIMIT  = 300;
 
 const ASSETS = [
   './',
@@ -14,15 +16,42 @@ const ASSETS = [
   './app.js',
   './products.js',
   './manifest.json',
-  'https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js'
+];
+
+// ⚡ Первые ~12 блюд — самые ходовые. Меняйте список под себя.
+// Имена должны точно совпадать с файлами в images/.
+const PRECACHE_IMAGES = [
+  './imageswebp/vach3000.webp',
+  './imageswebp/ag3100.webp',
+  './imageswebp/mp2900.webp',
+  './imageswebp/ma2500.webp',
+  './imageswebp/st800sk700sb830stv2000.webp',
+  './imageswebp/ssh1950.webp',
+  './imageswebp/shtv1400.webp',
+  './imageswebp/mr890.webp',
+  './imageswebp/sl950.webp',
+  './imageswebp/sfk650.webp',
+  './imageswebp/sa400.webp',
+  './imageswebp/sg350.webp',
 ];
 
 /* ---------- установка ---------- */
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache =>
-      cache.addAll(ASSETS).catch(err => console.log('Cache addAll:', err))
-    )
+    (async () => {
+      // app-shell
+      const appCache = await caches.open(CACHE_NAME);
+      await appCache.addAll(ASSETS).catch(err => console.log('Cache addAll:', err));
+
+      // критичные картинки — в отдельный долгоживущий кэш
+      const imgCache = await caches.open(IMAGE_CACHE);
+      // качаем параллельно, но не падаем, если какая-то не скачалась
+      await Promise.all(
+        PRECACHE_IMAGES.map(url =>
+          imgCache.add(url).catch(() => console.log('Precache miss:', url))
+        )
+      );
+    })()
   );
   self.skipWaiting();
 });
@@ -33,7 +62,6 @@ self.addEventListener('activate', (event) => {
     caches.keys().then(keys =>
       Promise.all(
         keys
-          // Удаляем только устаревшие app-shell кэши; кэш картинок живёт отдельно
           .filter(k => k !== CACHE_NAME && k !== IMAGE_CACHE)
           .map(k => caches.delete(k))
       )
@@ -42,7 +70,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-/* ---------- чистка кэша картинок (FIFO) ---------- */
+/* ---------- чистка image-кэша ---------- */
 async function pruneImageCache() {
   const cache = await caches.open(IMAGE_CACHE);
   const keys  = await cache.keys();
@@ -60,7 +88,7 @@ self.addEventListener('fetch', (event) => {
     event.request.destination === 'image' ||
     /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(event.request.url);
 
-  /* ----- КАРТИНКИ: cache-first (мгновенно после первого визита) ----- */
+  // КАРТИНКИ — cache-first (мгновенно после установки SW)
   if (isImage) {
     event.respondWith(
       caches.open(IMAGE_CACHE).then(async (cache) => {
@@ -83,7 +111,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* ----- ОСТАЛЬНОЕ: network-first с fallback в кэш ----- */
+  // ОСТАЛЬНОЕ — network-first с fallback в кэш
   event.respondWith(
     fetch(event.request)
       .then((response) => {
