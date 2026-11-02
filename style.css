@@ -1523,3 +1523,29 @@ body {
 svg {
   overflow: visible;
 }
+
+/* ===== PWA standalone: safe-area insets =====
+   В standalone-режиме вебвью уходит под строку статуса / «челку».
+   Отступаем сверху, чтобы шапка и модалки не перекрывались системным UI. */
+
+.header-inner {
+  /* было: padding: 14px 16px 16px;  → верх + safe-area */
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 16px;
+}
+
+.offline-banner {
+  /* было: padding: 10px 16px; */
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
+}
+
+.modal {
+  /* нижняя часть модалки уже была с safe-area;
+     верхняя тоже нужна — модалка может занимать почти весь экран */
+  padding-top: calc(8px + env(safe-area-inset-top, 0px));
+}
+
+.success-screen {
+  /* было: padding: 32px; */
+  padding: calc(32px + env(safe-area-inset-top, 0px)) 32px
+           calc(32px + env(safe-area-inset-bottom, 0px));
+}
