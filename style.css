@@ -19,7 +19,6 @@ input, textarea, select { font-family: inherit; }
   --success: #4ade80;
   --danger: #f87171;
   --transition: .22s cubic-bezier(.4,0,.2,1);
-  /* Тёмная подложка под фото (совпадает с тёмным фоном изображений) */
   --photo-bg: #14141a;
 }
 
@@ -336,7 +335,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: var(--photo-bg);   /* страховка от sub-pixel зазоров */
+  background: var(--photo-bg);
 }
 
 /* gradients */
@@ -349,8 +348,6 @@ body {
 .grad-7 { background: linear-gradient(135deg, #34d399, #10b981); }
 .grad-8 { background: linear-gradient(135deg, #fb923c, #f472b6); }
 
-/* ⚡ Если внутри контейнера реальное фото — тёмный фон вместо градиента,
-   чтобы даже при малейшем просвете не было жёлтых полос */
 .product-img.has-photo,
 .cart-item-img.has-photo,
 .similar-img.has-photo,
@@ -443,7 +440,7 @@ body {
 }
 .products-list.grid .product-img {
   width: 100%;
-  height: auto;               /* ← вернули, как было */
+  height: auto;
   aspect-ratio: 1 / 1;
   border-radius: 12px;
 }
@@ -1367,7 +1364,7 @@ body {
 .success-screen h2 { font-size: 24px; margin-bottom: 10px; font-weight: 800; letter-spacing: -.5px; }
 .success-screen p { color: var(--text-muted); margin-bottom: 32px; font-size: 14px; max-width: 280px; }
 
-/* Install */
+/* Install banner */
 .install-banner {
   position: fixed;
   bottom: calc(var(--nav-h) + 24px + env(safe-area-inset-bottom, 0));
@@ -1418,6 +1415,134 @@ body {
   color: var(--text-muted);
   flex-shrink: 0;
 }
+
+/* ============ INSTALL IN PROFILE ============ */
+.install-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(255,107,53,.12), rgba(255,184,77,.12));
+  border: 1.5px solid rgba(255,107,53,.28);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.install-profile-card:active { transform: scale(.98); }
+.install-profile-card:hover { border-color: var(--accent); }
+.install-profile-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent-grad);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(255,107,53,.4);
+}
+.install-profile-text { flex: 1; min-width: 0; }
+.install-profile-title { font-weight: 800; font-size: 14px; }
+.install-profile-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+.install-profile-btn {
+  padding: 9px 14px;
+  background: var(--accent-grad);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(255,107,53,.35);
+}
+.install-profile-btn:active { transform: scale(.94); }
+.install-profile-arrow { color: var(--text-muted); flex-shrink: 0; }
+
+/* Install guide modal */
+.install-installed { text-align: center; padding: 32px 8px 24px; }
+.install-installed-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(74,222,128,.15);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.install-installed p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+.install-platform-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--hover);
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.install-note {
+  padding: 12px 14px;
+  background: rgba(245,158,11,.12);
+  border: 1px solid rgba(245,158,11,.3);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+.install-note b { color: var(--text); }
+
+.install-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+.install-step:last-child { border-bottom: none; }
+.install-step b { color: var(--text); font-weight: 700; }
+.install-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(255,107,53,.35);
+}
+.install-divider {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 18px 0;
+  position: relative;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.install-divider::before,
+.install-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 62px);
+  height: 1px;
+  background: var(--border);
+}
+.install-divider::before { left: 0; }
+.install-divider::after { right: 0; }
 
 /* Toast */
 .toast {
@@ -1524,28 +1649,21 @@ svg {
   overflow: visible;
 }
 
-/* ===== PWA standalone: safe-area insets =====
-   В standalone-режиме вебвью уходит под строку статуса / «челку».
-   Отступаем сверху, чтобы шапка и модалки не перекрывались системным UI. */
+/* ===== PWA standalone: safe-area insets ===== */
 
 .header-inner {
-  /* было: padding: 14px 16px 16px;  → верх + safe-area */
   padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 16px;
 }
 
 .offline-banner {
-  /* было: padding: 10px 16px; */
   padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px;
 }
 
 .modal {
-  /* нижняя часть модалки уже была с safe-area;
-     верхняя тоже нужна — модалка может занимать почти весь экран */
   padding-top: calc(8px + env(safe-area-inset-top, 0px));
 }
 
 .success-screen {
-  /* было: padding: 32px; */
   padding: calc(32px + env(safe-area-inset-top, 0px)) 32px
            calc(32px + env(safe-area-inset-bottom, 0px));
 }
