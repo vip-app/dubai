@@ -684,7 +684,7 @@ body {
 }
 
 /* PROFILE */
-.profile-view { padding-top: 8px; }
+.profile-view { padding-top: 16px; }
 .profile-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -693,7 +693,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   cursor: pointer;
   transition: all var(--transition);
   position: relative;
